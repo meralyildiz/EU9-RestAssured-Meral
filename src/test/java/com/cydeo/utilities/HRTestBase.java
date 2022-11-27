@@ -12,6 +12,9 @@ public abstract class HRTestBase {
         //save baseurl inside this variable so that we dont need to type each http method.
         baseURI = "http://44.208.31.140:1000/ords/hr";
 
+        String dbUrl = "jdbc:oracle:thin:@ 44.208.31.140:1521:XE\"";
+        String dbUsername = "hr";
+        String dbPassword = "hr";
     }
 
 }

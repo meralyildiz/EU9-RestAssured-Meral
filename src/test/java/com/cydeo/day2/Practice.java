@@ -3,11 +3,16 @@ package com.cydeo.day2;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static io.restassured.RestAssured.baseURI;
+import static io.restassured.RestAssured.given;
 
 public class Practice {
 
@@ -248,5 +253,80 @@ public class Practice {
         Assertions.assertEquals("3312820936", response.path("phone").toString());
     }
 
+    public void test12(){
+        RestAssured.baseURI = "https://api.training.cydeo.com";
+        RestAssured.given().accept(ContentType.JSON)
+                .pathParam("id", 14)
+                .when().get("/student/{id}")
+                .then()
+                .statusCode(200)
+                .contentType("application/json;charset=UTF-8")
+                .body("student[0].firstName", Matchers.is("Glen"),
+                        "student[0].batch", Matchers.is(3),
+                        "students[0].contact.emailAddress",Matchers.is("lroutham0@opera.com"),
+                        "students[0].company.companyName", Matchers.is("Gabtune"),
+                        "students[0].company.address.zipCode", Matchers.is(72475)).log().all().extract();
+    }
+
+    /*
+        Given accept type is json
+        And path param id is 10
+        When user sends a get request to "api/spartans/{id}"
+        Then status code is 200
+        And content-type is "application/json"
+        And response payload values match the following:
+             id is 10,
+             name is "Lorenza",
+             gender is "Female",
+             phone is 3312820936
+      */
+    @Test
+    public void test14(){
+        baseURI = "http://44.208.31.140:1000/ords/hr";
+
+        Response response = given().accept(ContentType.JSON)
+                .queryParam("q", "{\"job_id\": \"IT_PROG\"}")
+                .when().get("/employees");
+
+
+        List<String> list = response.path("items.first_name");
+        System.out.println("list = " + list);
+
+
+    }
+
+    //get the second country name with JsonPath
+    //get all country ids
+    //get all country names where their region id is equal to 2
+    // get me all email of employees who is working as IT_PROG
+    //get me first name of employees who is making more than 10000
+    //get the max salary first_name
+
+    @Test
+    public void test15(){
+        baseURI = "http://44.208.31.140:1000/ords/hr";
+
+       Response response = given().accept(ContentType.JSON)
+               .when().get("/countries");
+
+        //System.out.println("response.path(\"items[1].country_name\") = " + response.path("items[1].country_name"));
+
+        JsonPath jsonPath = response.jsonPath();
+        String secondCountry = jsonPath.getString("items[1].country_name");
+        System.out.println("secondCountry = " + secondCountry);
+
+        List<String> countryIds= jsonPath.getList("items.country_id");
+        System.out.println("countryIds = " + countryIds);
+
+        Response response2 = given().when().queryParam("q", "{\"region_id\": 2}")
+                .and().get("/countries");
+
+        JsonPath jsonPath2 = response2.jsonPath();
+        List<Object> countryNames = jsonPath2.getList("items.country_name");
+        System.out.println("countryNames = " + countryNames);
+    }
+
+
 
 }
+

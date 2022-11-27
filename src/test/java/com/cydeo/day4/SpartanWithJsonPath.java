@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SpartanWithJsonPath extends SpartanTestBase {
+public class
+SpartanWithJsonPath extends SpartanTestBase {
     /*
         Given accept type is json
         And path param id is 10
